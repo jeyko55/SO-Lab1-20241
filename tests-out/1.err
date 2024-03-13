@@ -1,1 +1,1 @@
-usage: reverse <input> <output>
+./tester/run-tests.sh: line 27: 98603 Segmentation fault      ./reverse in.txt out.txt burger.txt
