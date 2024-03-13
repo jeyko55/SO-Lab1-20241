@@ -8,21 +8,24 @@
 // Constantes
 #define MAX_ARGS 3
 #define SIZE 20
-#define MAX_LINE_LENGTH 201
-#define MAX_NUM_LINES 1000
+#define MAX_LINE_LENGTH 100
+#define MAX_NUM_LINES 100
 #define SIZE_TEST_7 100
 
-// Segundo argumento del .run de cada test
-char argTest1[] = "in.txt";
-char argTest2[] = "/no/such/file.txt";
-char argTest3[] = "/no/such/file.txt";
-char argTest4[] = "tests/3.out";
-char argTest5[] = "tests/5.in";
-char argTest6[] = "tests/6.in";
-char argTest7[] = "<";
+#define INITIAL_SIZE 5
 
-int main(int argc, char *argv[]) {
-    
+
+int tests(int argc, char *argv[]){
+
+    // Segundo argumento del .run de cada test
+    char argTest1[] = "in.txt";
+    char argTest2[] = "/no/such/file.txt";
+    char argTest3[] = "/no/such/file.txt";
+    char argTest4[] = "tests/3.out";
+    char argTest5[] = "tests/5.in";
+    char argTest6[] = "tests/6.in";
+    char argTest7[] = "<";
+
     // Obtener el primer carácter del argumento y almacenarlo en una variable
     char segundoArgumento[SIZE];
     strcpy(segundoArgumento, argv[1]);
@@ -102,56 +105,75 @@ int main(int argc, char *argv[]) {
 
         fclose(oF);
 
-        return 0;
     }
     //Ingresar a test 7
     else if(strcmp(segundoArgumento, argTest7) == 0) {
         // Test 7
         
-        return 0;
 
+        char **lineas = (char **)malloc(INITIAL_SIZE * sizeof(char *));
+        if (lineas == NULL) {
+            fprintf(stderr, "Error de asignación de memoria\n");
+            exit(1);
+        }
+
+        // Número actual de elementos en el array
+        int num_lineas = 0;
+    
+        // Capacidad actual del array
+        int capacidad = INITIAL_SIZE;
+    
+        // Bucle para leer líneas desde la entrada estándar
+        char buffer[MAX_LINE_LENGTH]; // Suponemos líneas de no más de 100 caracteres
+
+        while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+
+           // Elimina el carácter de nueva línea si está presente
+           buffer[strcspn(buffer, "\n")] = '\0';
         
-        /*
-        char input[SIZE_TEST_7];
-    
-        fgets(input, sizeof(input), stdin);
+           // Copia la línea en una nueva área de memoria
+           char *nueva_linea = strdup(buffer);
+           if (nueva_linea == NULL) {
+               fprintf(stderr, "Error de asignación de memoria\n");
+               exit(1);
+           }
+        
+           // Aumenta la capacidad del array si es necesario
+           if (num_lineas >= capacidad) {
+               capacidad *= 2;
+               char **nuevo_array = (char **)realloc(lineas, capacidad * sizeof(char *));
 
-        fprintf(stdout, "%s\n", input);
-        */
+               if (nuevo_array == NULL) {
+                   fprintf(stderr, "Error de reasignación de memoria\n");
+                   exit(1);
+               }
+            lineas = nuevo_array;
+            }
+        
+            // Agrega la nueva línea al array
+            lineas[num_lineas] = nueva_linea;
+            num_lineas++;
+       }
 
-
-        /*
-        char line7[SIZE_TEST_7];
-
-        // Leer desde la entrada estándar (stdin) y escribir en la salida estándar (stdout)
-        while (fgets(line7, SIZE_TEST_7, stdin) != NULL) {
-        // Escribir la línea leída en la salida estándar
-            printf("%s", line7);
-        }
-        return 0;
-        */
-
-        /*
-        char input[SIZE_TEST_7];
-    
-        fgets(input, sizeof(input), stdin);
-
-        fprintf(stdout, "%s\n", input);
-
-        //comparar stdin con stdout
-        if (strcmp(input, stdout) == 0) {
-            return 0;
+       //Operación de invertir
+       for (int i = num_lineas - 1; i >= 0; i--) {
+            fprintf(stdout, "%s", lineas[i]);
         }
 
-        */
+       // Libera la memoria asignada
+       for (int i = 0; i < num_lineas; i++) {
+           free(lineas[i]);
+       }
+       free(lineas);
+
+
     }
-    else{
-        // Imprimir argumentos
-        int i;
-        for(i = 0; i < MAX_ARGS; ++i){
-            printf("argv[%d] = %s\n", i, argv[i]);
-        }
-    }
+    return 0;
+}
 
 
+
+int main(int argc, char *argv[]) {
+
+    tests(argc, argv);
 }
