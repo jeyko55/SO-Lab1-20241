@@ -7,8 +7,8 @@
 
 
 int tests(int argc, char *argv[]){
+    
     // Atributos y constantes
-
     #define MAX_LINEA 100
     #define MAX_NUM_LINEAS 100
     #define INITIAL_SIZE 5
@@ -21,13 +21,12 @@ int tests(int argc, char *argv[]){
     char lines[MAX_NUM_LINEAS][MAX_LINEA];
     int numLines = 0;
 
-
     if (argc > 3) { // Test 1
         // Más de tres argumentos
         fprintf(stderr, "usage: reverse <input> <output>\n");
         exit(1);
     }
-    else if(argc == 3){ 
+    else if(argc == 3){
         if(stat(argv[1], &input_stat) == -1) { // Test 3
             fprintf(stderr, "reverse: cannot open file '%s'\n", argv[1]);
             exit(1);
@@ -64,8 +63,17 @@ int tests(int argc, char *argv[]){
         }
     }
     else if(argc == 1){ // Test 7, cuando se ejecuta './reverse < tests/7.in', argc es igual a 1 que es el argumento del ejecutable './reverse'
-        
+         
         // FALTA EL TEST 7:
+        // Leer líneas desde la entrada estándar
+        while (fgets(line, MAX_LINEA, stdin) != NULL && numLines < MAX_NUM_LINEAS) {
+            strcpy(lines[numLines], line);
+            numLines++;
+        }
+        // Escribir las líneas en orden inverso en la salida estándar
+        for (int i = numLines - 1; i >= 0; i--) {
+            printf("%s", lines[i]);
+        }
     }
 
    // Se debe retornar 0 para que se reconozca que el programa se ejecutó sin errores.
@@ -73,8 +81,6 @@ int tests(int argc, char *argv[]){
 }
 
 
-
 int main(int argc, char *argv[]) {
-
     tests(argc, argv);
 }
